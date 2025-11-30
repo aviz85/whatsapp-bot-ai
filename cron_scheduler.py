@@ -49,6 +49,9 @@ class CronScheduler:
         
         cron_expr = cron_expression or settings.cron_schedule
         
+        # Re-initialize scheduler to ensure clean state after shutdown
+        self.scheduler = AsyncIOScheduler()
+        
         try:
             # Parse cron expression
             parts = cron_expr.split()

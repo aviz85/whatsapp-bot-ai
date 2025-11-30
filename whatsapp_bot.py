@@ -158,9 +158,22 @@ class WhatsAppBot:
             if progress_callback:
                 progress_callback(10, "מושך הודעות מה-API...", "מתחבר ל-Green API")
             
-            messages = self.green_client.get_last_incoming_messages(minutes=minutes)
+            # Fetch incoming messages
+            incoming_messages = self.green_client.get_last_incoming_messages(minutes=minutes)
             
-            if not messages:
+            # Fetch outgoing messages
+            if progress_callback:
+                progress_callback(20, "מושך הודעות יוצאות...", "מתחבר ל-Green API")
+            outgoing_messages = self.green_client.get_last_outgoing_messages(minutes=minutes)
+            
+            # Combine all messages
+            all_messages = incoming_messages + outgoing_messages
+            
+            # Sort by timestamp (ascending)
+            all_messages.sort(key=lambda x: x.timestamp)
+            
+            if not all_messages:
+                self.stats.last_analysis_time = datetime.now()
                 if progress_callback:
                     progress_callback(100, "✅ ניתוח הסתיים", "לא נמצאו הודעות לניתוח")
                 
@@ -171,46 +184,18 @@ class WhatsAppBot:
                 }
             
             # Store messages in database
-            new_messages_count = db.store_messages(messages)
+            new_messages_count = db.store_messages(all_messages)
             self.logger.info(f"Stored {new_messages_count} new messages in database")
             
             if progress_callback:
-                progress_callback(30, "מאתר שיחות פתוחות...", f"נמצאו {len(messages)} הודעות")
+                progress_callback(30, "מנתח שיחות...", f"נמצאו {len(all_messages)} הודעות סה\"כ")
             
             # Update statistics
-            self.stats.total_messages = len(messages)
+            self.stats.total_messages = len(all_messages)
             self.stats.last_analysis_time = datetime.now()
             
-            # Step 1.5: Fetch full history for identified chats to check if answered
-            # Group incoming messages by chat to identify active chats
-            active_chat_ids = set(msg.chat_id for msg in messages)
-            
-            if progress_callback:
-                progress_callback(35, "מאמת סטטוס שיחות...", f"בודק היסטוריה של {len(active_chat_ids)} צ'אטים")
-            
-            full_history_messages = []
-            import time
-            
-            for i, chat_id in enumerate(active_chat_ids):
-                # Update progress
-                if progress_callback and i % 5 == 0:
-                    progress = 35 + int((i / len(active_chat_ids)) * 15)
-                    progress_callback(progress, "מאמת סטטוס שיחות...", f"בודק צ'אט {i+1} מתוך {len(active_chat_ids)}")
-                
-                # Fetch history (last 10 messages)
-                # This is crucial to see if we replied (outgoing messages)
-                history = self.green_client.get_chat_history(chat_id, count=10)
-                if history:
-                    full_history_messages.extend(history)
-                else:
-                    # Fallback to incoming messages if history fetch fails
-                    full_history_messages.extend([m for m in messages if m.chat_id == chat_id])
-                
-                # Small delay to avoid rate limits (5 requests per second max)
-                time.sleep(0.2)
-            
-            # Use the full history for analysis instead of just incoming messages
-            messages = full_history_messages
+            # Use combined messages for analysis
+            messages = all_messages
             
             # Step 2: Analyze messages and identify open conversations
             if progress_callback:

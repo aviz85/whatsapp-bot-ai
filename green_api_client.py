@@ -83,6 +83,56 @@ class GreenAPIClient:
         except requests.exceptions.RequestException as e:
             self.logger.error(f"Failed to fetch messages from Green API: {e}")
             raise
+
+    def get_last_outgoing_messages(self, minutes: int = 1440) -> List[GreenAPIMessage]:
+        """
+        Get last outgoing messages from Green API
+        
+        Args:
+            minutes: Time period in minutes to fetch messages (default: 1440 = 24 hours)
+        
+        Returns:
+            List of GreenAPIMessage objects
+        """
+        try:
+            endpoint = f"lastOutgoingMessages/{self.token_instance}"
+            url = f"{self.base_url}/waInstance{self.id_instance}/{endpoint}?minutes={minutes}"
+            
+            self.logger.info(f"Fetching outgoing messages from Green API for the last {minutes} minutes")
+            response = requests.get(url)
+            response.raise_for_status()
+            
+            messages_data = response.json()
+            messages = []
+            
+            for msg_data in messages_data:
+                # Convert snake_case to camelCase for our model
+                message = GreenAPIMessage(
+                    type=msg_data.get('type', ''),
+                    id_message=msg_data.get('idMessage', ''),
+                    timestamp=msg_data.get('timestamp', 0),
+                    type_message=msg_data.get('typeMessage', ''),
+                    chat_id=msg_data.get('chatId', ''),
+                    sender_id=msg_data.get('senderId'),
+                    sender_name=msg_data.get('senderName'),
+                    sender_contact_name=msg_data.get('senderContactName'),
+                    text_message=msg_data.get('textMessage'),
+                    is_forwarded=msg_data.get('isForwarded', False),
+                    forwarding_score=msg_data.get('forwardingScore', 0),
+                    download_url=msg_data.get('downloadUrl'),
+                    caption=msg_data.get('caption'),
+                    file_name=msg_data.get('fileName'),
+                    is_edited=msg_data.get('isEdited', False),
+                    is_deleted=msg_data.get('isDeleted', False)
+                )
+                messages.append(message)
+            
+            self.logger.info(f"Successfully fetched {len(messages)} outgoing messages")
+            return messages
+        
+        except requests.exceptions.RequestException as e:
+            self.logger.error(f"Failed to fetch outgoing messages from Green API: {e}")
+            raise
     
     def send_message(self, chat_id: str, message: str) -> Dict[str, Any]:
         """

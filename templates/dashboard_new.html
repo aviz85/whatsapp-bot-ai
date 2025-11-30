@@ -98,6 +98,24 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
@@ -396,6 +414,19 @@
                         <br>פורמט Cron: דקה שעה יום חודש יום-בשבוע
                     </div>
 
+                    <div class="info-box"
+                        style="background: #fff3cd; color: #856404; border: 1px solid #ffeeba; margin-top: 10px;">
+                        <strong>⚠️ שים לב:</strong> התזמון האוטומטי פועל רק כאשר השרת (התוכנה) רץ ברקע. אם המחשב כבוי או
+                        התוכנה סגורה, הניתוח לא יתבצע.
+                    </div>
+
+                    <div id="nextRunDisplay"
+                        style="margin-top: 15px; padding: 10px; background: #e2e3e5; border-radius: 5px; display: none;">
+                        <div style="margin-bottom: 5px;"><strong>🕒 ריצה אחרונה:</strong> <span
+                                id="lastRunTime">--</span></div>
+                        <div><strong>📅 ריצה הבאה:</strong> <span id="nextRunTime">--</span></div>
+                    </div>
+
                     <div class="form-group">
                         <label>
                             <input type="checkbox" id="cronEnabled" onchange="toggleCronInputs()">
@@ -426,11 +457,6 @@
                             </small>
                         </div>
 
-                        <div id="cronStatus"
-                            style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
-                            <strong>סטטוס:</strong> <span id="cronStatusText">לא פעיל</span><br>
-                            <strong>הרצה הבאה:</strong> <span id="cronNextRun">-</span>
-                        </div>
                     </div>
                 </div>
 
@@ -636,16 +662,38 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    document.getElementById('cronEnabled').checked = result.enabled;
-                    document.getElementById('cronSchedule').value = result.schedule || '0 9 * * *';
+                    const enabled = result.enabled;
+                    const schedule = result.schedule || '0 9 * * *';
 
-                    if (result.enabled) {
-                        document.getElementById('cronInputs').style.display = 'block';
-                        document.getElementById('cronStatusText').textContent = 'פעיל ✅';
-                        document.getElementById('cronNextRun').textContent = result.next_run || '-';
+                    document.getElementById('cronEnabled').checked = enabled;
+                    document.getElementById('cronSchedule').value = schedule;
+
+                    // Match preset
+                    const presetSelect = document.getElementById('cronPreset');
+                    const options = Array.from(presetSelect.options).map(opt => opt.value);
+
+                    if (options.includes(schedule) && schedule !== 'custom' && schedule !== '') {
+                        presetSelect.value = schedule;
+                        document.getElementById('customCronGroup').style.display = 'none';
                     } else {
-                        document.getElementById('cronStatusText').textContent = 'לא פעיל ❌';
-                        document.getElementById('cronNextRun').textContent = '-';
+                        presetSelect.value = 'custom';
+                        document.getElementById('customCronGroup').style.display = 'block';
+                    }
+
+                    if (enabled) {
+                        document.getElementById('cronInputs').style.display = 'block';
+                    }
+
+                    // Update next run display
+                    const nextRunDisplay = document.getElementById('nextRunDisplay');
+                    const nextRunTime = document.getElementById('nextRunTime');
+
+                    if (enabled && result.next_run) {
+                        const date = new Date(result.next_run);
+                        nextRunTime.textContent = date.toLocaleString('he-IL');
+                        nextRunDisplay.style.display = 'block';
+                    } else {
+                        nextRunDisplay.style.display = 'none';
                     }
                 }
             } catch (error) {
@@ -862,23 +910,30 @@
         }
 
         async function analyzeMessages() {
-            const config = loadConfigFromLocalStorage();
-            if (!config.green_api_id || !config.openrouter_key) {
-                showNotification('נא להגדיר API Keys בהגדרות תחילה', 'error');
-                showConfigModal();
-                return;
-            }
+            const btn = document.getElementById('analyzeBtn');
+            const originalText = btn.innerHTML;
 
-            // Verify connection first
-            const isConnected = await verifyConnection();
-            if (!isConnected) {
-                showNotification('Green API לא מחובר. נא לבדוק הגדרות', 'error');
-                return;
-            }
-
-            showNotification('מתחיל ניתוח...', 'info');
+            // Set loading state
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> מנתח...';
 
             try {
+                const config = loadConfigFromLocalStorage();
+                if (!config.green_api_id || !config.openrouter_key) {
+                    showNotification('נא להגדיר API Keys בהגדרות תחילה', 'error');
+                    showConfigModal();
+                    return;
+                }
+
+                // Verify connection first
+                const isConnected = await verifyConnection();
+                if (!isConnected) {
+                    showNotification('Green API לא מחובר. נא לבדוק הגדרות', 'error');
+                    return;
+                }
+
+                showNotification('מתחיל ניתוח...', 'info');
+
                 const response = await makeAuthenticatedRequest('/api/analyze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -895,6 +950,10 @@
                 }
             } catch (error) {
                 showNotification('שגיאה: ' + getHebrewErrorMessage(error.message), 'error');
+            } finally {
+                // Restore button state
+                btn.disabled = false;
+                btn.innerHTML = originalText;
             }
         }
 
@@ -908,6 +967,29 @@
                     document.getElementById('unansweredConversations').textContent = result.bot_stats.unanswered_conversations || 0;
                     document.getElementById('urgentConversations').textContent = result.bot_stats.urgent_conversations || 0;
                     document.getElementById('activeChats').textContent = result.bot_stats.active_chats || 0;
+
+                    if (result.bot_stats.last_analysis_time) {
+                        const lastDate = new Date(result.bot_stats.last_analysis_time);
+                        const lastRunEl = document.getElementById('lastRunTime');
+                        if (lastRunEl) lastRunEl.textContent = lastDate.toLocaleString('he-IL');
+                    } else {
+                        const lastRunEl = document.getElementById('lastRunTime');
+                        if (lastRunEl) lastRunEl.textContent = 'טרם רץ';
+                    }
+                }
+
+                // Update Cron Status
+                if (result.cron_status) {
+                    const nextRunDisplay = document.getElementById('nextRunDisplay');
+                    const nextRunTime = document.getElementById('nextRunTime');
+
+                    if (result.cron_status.enabled && result.cron_status.next_run) {
+                        const date = new Date(result.cron_status.next_run);
+                        nextRunTime.textContent = date.toLocaleString('he-IL');
+                        nextRunDisplay.style.display = 'block';
+                    } else {
+                        nextRunDisplay.style.display = 'none';
+                    }
                 }
             } catch (error) {
                 console.error('Error refreshing status:', error);

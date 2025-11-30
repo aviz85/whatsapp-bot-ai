@@ -16,10 +16,28 @@ from ai_models import AVAILABLE_MODELS, get_models_by_provider, get_providers
 from cron_scheduler import scheduler
 
 
+import os
+from logging.handlers import RotatingFileHandler
+
+# Create logs directory
+os.makedirs("logs", exist_ok=True)
+
 # Configure logging
+log_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+log_file = "logs/whatsapp_bot.log"
+
+# File Handler (Rotating: 10MB, keep 5 backups)
+file_handler = RotatingFileHandler(log_file, maxBytes=10*1024*1024, backupCount=5, encoding='utf-8')
+file_handler.setFormatter(log_formatter)
+
+# Console Handler
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(log_formatter)
+
+# Setup Root Logger
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    handlers=[file_handler, console_handler]
 )
 
 # Progress tracking
@@ -228,9 +246,14 @@ async def get_status():
             bot_stats["unanswered_conversations"] = latest_report.get("total_conversations", 0)
             bot_stats["urgent_conversations"] = len(latest_report.get("urgent_conversations", []))
         
+        # Get cron status
+        from cron_scheduler import scheduler
+        cron_status = scheduler.get_status()
+        
         return {
             "account_status": "cached",
             "bot_stats": bot_stats,
+            "cron_status": cron_status,
             "message": "Data from cache and database"
         }
     except Exception as e:
@@ -513,8 +536,13 @@ async def update_cron_schedule(request: CronScheduleUpdate):
         if request.enabled:
             # Start or update scheduler
             schedule = request.schedule or settings.cron_schedule
-            scheduler.start(schedule)
-            message = f"Cron scheduler enabled with schedule: {schedule}"
+            
+            if scheduler.is_running:
+                scheduler.update_schedule(schedule)
+                message = f"Cron schedule updated to: {schedule}"
+            else:
+                scheduler.start(schedule)
+                message = f"Cron scheduler enabled with schedule: {schedule}"
         else:
             # Stop scheduler
             scheduler.stop()
