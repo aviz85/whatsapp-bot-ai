@@ -42,7 +42,9 @@ env/
 whatsapp_bot.db
 
 # IDE
-.vscode/
+.vscode/*
+!.vscode/launch.json
+!.vscode/settings.json
 .idea/
 *.swp
 *.swo

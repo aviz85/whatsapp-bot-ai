@@ -29,6 +29,8 @@ class Settings(BaseSettings):
     # Message Processing Configuration
     max_messages_per_chat: int = 4
     message_analysis_minutes: int = 1440  # 24 hours default
+    analyze_group_chats: bool = False
+    analyze_all_conversations: bool = False
     
     # Cron Schedule Configuration
     cron_enabled: bool = False

@@ -57,6 +57,12 @@ class ConfigInjector:
         
         if config.get('ai_model'):
             settings.openrouter_model = config['ai_model']
+            
+        if 'analyze_group_chats' in config:
+            settings.analyze_group_chats = config['analyze_group_chats']
+            
+        if 'analyze_all_conversations' in config:
+            settings.analyze_all_conversations = config['analyze_all_conversations']
         
         logger.info("Configuration applied from request")
     

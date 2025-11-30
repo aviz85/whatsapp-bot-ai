@@ -33,6 +33,9 @@ class MessageAnalyzer:
         
         # Create conversation objects for each chat
         for chat_id, chat_messages in chat_groups.items():
+            # Check if group chats should be analyzed
+            if not settings.analyze_group_chats and chat_id.endswith('@g.us'):
+                continue
             # Sort messages by timestamp (oldest first)
             chat_messages.sort(key=lambda x: x.timestamp)
             
@@ -81,6 +84,9 @@ class MessageAnalyzer:
         # Get the last message
         last_message = messages[-1]
         
+        # Debug logging
+        # self.logger.debug(f"Checking conversation status. Last message type: {last_message.type}, Chat ID: {last_message.chat_id}")
+        
         # If the last message is incoming (from someone else), it's unanswered
         if last_message.type == "incoming":
             return True
@@ -99,6 +105,11 @@ class MessageAnalyzer:
         Returns:
             List of unanswered conversations
         """
+        # Check if we should analyze all conversations
+        if settings.analyze_all_conversations:
+            self.logger.info(f"Analyzing ALL {len(conversations)} conversations (including answered ones)")
+            return conversations
+            
         open_conversations = [conv for conv in conversations if conv.is_unanswered]
         
         self.logger.info(f"Found {len(open_conversations)} open conversations out of {len(conversations)} total")

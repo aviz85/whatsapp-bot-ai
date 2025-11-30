@@ -181,11 +181,46 @@ class WhatsAppBot:
             self.stats.total_messages = len(messages)
             self.stats.last_analysis_time = datetime.now()
             
+            # Step 1.5: Fetch full history for identified chats to check if answered
+            # Group incoming messages by chat to identify active chats
+            active_chat_ids = set(msg.chat_id for msg in messages)
+            
+            if progress_callback:
+                progress_callback(35, "מאמת סטטוס שיחות...", f"בודק היסטוריה של {len(active_chat_ids)} צ'אטים")
+            
+            full_history_messages = []
+            import time
+            
+            for i, chat_id in enumerate(active_chat_ids):
+                # Update progress
+                if progress_callback and i % 5 == 0:
+                    progress = 35 + int((i / len(active_chat_ids)) * 15)
+                    progress_callback(progress, "מאמת סטטוס שיחות...", f"בודק צ'אט {i+1} מתוך {len(active_chat_ids)}")
+                
+                # Fetch history (last 10 messages)
+                # This is crucial to see if we replied (outgoing messages)
+                history = self.green_client.get_chat_history(chat_id, count=10)
+                if history:
+                    full_history_messages.extend(history)
+                else:
+                    # Fallback to incoming messages if history fetch fails
+                    full_history_messages.extend([m for m in messages if m.chat_id == chat_id])
+                
+                # Small delay to avoid rate limits (5 requests per second max)
+                time.sleep(0.2)
+            
+            # Use the full history for analysis instead of just incoming messages
+            messages = full_history_messages
+            
             # Step 2: Analyze messages and identify open conversations
             if progress_callback:
                 progress_callback(50, "מקבץ הודעות לפי צ'אטים...", "מזהה שיחות שלא נענו")
             
             all_conversations, conversation_summaries = self.message_analyzer.analyze_conversations(messages)
+            
+            self.logger.info(f"Analyzed {len(messages)} messages")
+            self.logger.info(f"Found {len(all_conversations)} total conversations")
+            self.logger.info(f"Found {len(conversation_summaries)} OPEN conversations (summaries)")
             
             # Update conversations in database
             for conv in all_conversations:
@@ -252,7 +287,7 @@ class WhatsAppBot:
             
             return {
                 "success": True,
-                "message": f"Analysis completed. Found {priority_report.total_conversations} open conversations.",
+                "message": f"Analysis completed. Found {priority_report.total_conversations} open conversations. {priority_report.summary}",
                 "report": priority_report.dict(),
                 "stats": self.stats.dict()
             }

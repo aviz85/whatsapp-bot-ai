@@ -96,7 +96,7 @@ async def dashboard(request: Request):
             bot_stats["unanswered_conversations"] = latest_report.get("total_conversations", 0)
             bot_stats["urgent_conversations"] = len(latest_report.get("urgent_conversations", []))
         
-        return templates.TemplateResponse("dashboard.html", {
+        return templates.TemplateResponse("dashboard_new.html", {
             "request": request,
             "status": {
                 "account_status": "cached",
@@ -132,6 +132,17 @@ async def analyze_messages(request: AnalysisRequest, background_tasks: Backgroun
         if not is_valid:
             raise HTTPException(status_code=400, detail=error_msg)
         config_injector.apply_config(request.config)
+    
+    # Verify Green API connection before proceeding
+    from green_api_client import GreenAPIClient
+    client = GreenAPIClient()
+    is_connected, connection_msg = client.verify_connection()
+    
+    if not is_connected:
+        raise HTTPException(
+            status_code=503, 
+            detail=f"Green API not connected: {connection_msg}"
+        )
     
     # Reset progress
     analysis_progress = {
@@ -255,6 +266,17 @@ async def refresh_from_green(minutes: int = 60):
     This is the ONLY endpoint that calls Green API for messages.
     """
     try:
+        # Verify Green API connection before proceeding
+        from green_api_client import GreenAPIClient
+        client = GreenAPIClient()
+        is_connected, connection_msg = client.verify_connection()
+        
+        if not is_connected:
+            raise HTTPException(
+                status_code=503,
+                detail=f"Green API not connected: {connection_msg}"
+            )
+        
         logging.info(f"Manual refresh from Green API requested for last {minutes} minutes")
         
         # Fetch from Green API and store in database
@@ -265,9 +287,18 @@ async def refresh_from_green(minutes: int = 60):
             "message": f"Fetched {len(messages)} messages from Green API",
             "messages_count": len(messages)
         }
+    except HTTPException:
+        raise
     except Exception as e:
-        logging.error(f"Error refreshing from Green API: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        import traceback
+        error_msg = str(e) if str(e) else repr(e)
+        error_trace = traceback.format_exc()
+        logging.error(f"Error refreshing from Green API: {error_msg}")
+        logging.error(f"Traceback: {error_trace}")
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Error fetching messages: {error_msg}" if error_msg else "Unknown error occurred"
+        )
 
 
 @app.get("/api/database-stats")
@@ -355,6 +386,96 @@ async def update_config(request: ConfigUpdate):
     except Exception as e:
         logging.error(f"Error updating config: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/verify-connection")
+async def verify_connection_endpoint(force: bool = False):
+    """Verify Green API connection status"""
+    try:
+        from green_api_client import GreenAPIClient
+        
+        # Create client with current settings
+        client = GreenAPIClient()
+        is_connected, message = client.verify_connection(force_refresh=force)
+        
+        return {
+            "success": True,
+            "connected": is_connected,
+            "message": message,
+            "has_credentials": bool(settings.green_api_id_instance and settings.green_api_token_instance)
+        }
+    except Exception as e:
+        logging.error(f"Error verifying connection: {e}")
+        return {
+            "success": False,
+            "connected": False,
+            "message": f"Verification error: {str(e)}",
+            "has_credentials": False
+        }
+
+
+@app.post("/api/test-openrouter")
+async def test_openrouter_key(api_key: str = None):
+    """Test OpenRouter API key validity"""
+    try:
+        import requests
+        
+        # Use provided key or settings key
+        test_key = api_key or settings.openrouter_api_key
+        
+        if not test_key:
+            return {
+                "success": False,
+                "valid": False,
+                "message": "No API key provided"
+            }
+        
+        # Make a simple test request to OpenRouter
+        headers = {
+            "Authorization": f"Bearer {test_key}",
+            "Content-Type": "application/json"
+        }
+        
+        # Simple test payload
+        data = {
+            "model": "openai/gpt-3.5-turbo",
+            "messages": [{"role": "user", "content": "test"}],
+            "max_tokens": 5
+        }
+        
+        response = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers=headers,
+            json=data,
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            return {
+                "success": True,
+                "valid": True,
+                "message": "API key is valid"
+            }
+        elif response.status_code == 401:
+            return {
+                "success": True,
+                "valid": False,
+                "message": "Invalid API key (401 Unauthorized)"
+            }
+        else:
+            return {
+                "success": True,
+                "valid": False,
+                "message": f"Error: HTTP {response.status_code}"
+            }
+            
+    except Exception as e:
+        logging.error(f"Error testing OpenRouter key: {e}")
+        return {
+            "success": False,
+            "valid": False,
+            "message": f"Test failed: {str(e)}"
+        }
 
 
 @app.get("/api/models")

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,76 +11,76 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
         }
-        
+
         .header {
             background: white;
             border-radius: 15px;
             padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
-        
+
         .header h1 {
             color: #333;
             margin-bottom: 10px;
         }
-        
+
         .header p {
             color: #666;
         }
-        
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
-        
+
         .stat-card {
             background: white;
             border-radius: 15px;
             padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             text-align: center;
             transition: transform 0.3s ease;
         }
-        
+
         .stat-card:hover {
             transform: translateY(-5px);
         }
-        
+
         .stat-number {
             font-size: 2.5em;
             font-weight: bold;
             color: #667eea;
             margin-bottom: 10px;
         }
-        
+
         .stat-label {
             color: #666;
             font-size: 1.1em;
         }
-        
+
         .actions {
             background: white;
             border-radius: 15px;
             padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
-        
+
         .btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -91,24 +92,24 @@
             margin: 5px;
             transition: all 0.3s ease;
         }
-        
+
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-        
+
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
-        
+
         .messages {
             background: white;
             border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
-        
+
         .message-item {
             padding: 15px;
             border-bottom: 1px solid #eee;
@@ -116,26 +117,26 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .message-item:last-child {
             border-bottom: none;
         }
-        
+
         .message-content {
             flex: 1;
         }
-        
+
         .message-meta {
             color: #999;
             font-size: 0.9em;
         }
-        
+
         .loading {
             text-align: center;
             padding: 20px;
             color: #666;
         }
-        
+
         .success {
             background: #d4edda;
             color: #155724;
@@ -143,7 +144,7 @@
             border-radius: 5px;
             margin: 10px 0;
         }
-        
+
         .error {
             background: #f8d7da;
             color: #721c24;
@@ -151,31 +152,33 @@
             border-radius: 5px;
             margin: 10px 0;
         }
-        
+
         .form-group {
             margin-bottom: 15px;
         }
-        
+
         .form-group label {
             display: block;
             margin-bottom: 5px;
             color: #333;
             font-weight: 500;
         }
-        
-        .form-group input, .form-group textarea, .form-group select {
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 1em;
         }
-        
+
         .form-group textarea {
             height: 100px;
             resize: vertical;
         }
-        
+
         .modal {
             display: none;
             position: fixed;
@@ -183,32 +186,30 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
             overflow-y: auto;
+            padding: 20px;
         }
-        
+
         .modal-content {
             position: relative;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            margin: 50px auto;
             background: white;
             padding: 30px;
             border-radius: 15px;
             width: 90%;
             max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
-        
+
         .tab-container {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
             border-bottom: 2px solid #eee;
         }
-        
+
         .tab {
             padding: 10px 20px;
             cursor: pointer;
@@ -218,21 +219,21 @@
             font-size: 1em;
             transition: all 0.3s;
         }
-        
+
         .tab.active {
             color: #667eea;
             border-bottom: 2px solid #667eea;
             font-weight: bold;
         }
-        
+
         .tab-content {
             display: none;
         }
-        
+
         .tab-content.active {
             display: block;
         }
-        
+
         .warning-box {
             background: #fff3cd;
             border: 1px solid #ffc107;
@@ -241,7 +242,7 @@
             margin: 15px 0;
             color: #856404;
         }
-        
+
         .info-box {
             background: #d1ecf1;
             border: 1px solid #17a2b8;
@@ -252,6 +253,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -259,7 +261,7 @@
             <p>מערכת ניהול ומעקב אחר הודעות ווצאפ עם ניתוח דחיפות באמצעות AI</p>
             <div id="configStatus" style="margin-top: 10px; font-size: 0.9em;"></div>
         </div>
-        
+
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-number" id="totalMessages">{{ stats.total_messages or 0 }}</div>
@@ -278,102 +280,129 @@
                 <div class="stat-label">צ'אטים פעילים</div>
             </div>
         </div>
-        
+
         <div class="actions">
             <h2>פעולות</h2>
-            <button class="btn" onclick="analyzeMessages()">🔍 נתח הודעות</button>
-            <button class="btn" onclick="fetchRecentMessages()">📥 משוך הודעות אחרונות</button>
+            <div id="connectionStatus" style="padding: 15px; margin-bottom: 20px; border-radius: 5px; display: none;">
+                <button onclick="verifyConnection(true)"
+                    style="float: left; background: none; border: none; cursor: pointer; font-size: 1.2em;"
+                    title="רענן בדיקת חיבור">🔄</button>
+                <span id="connectionStatusText"></span>
+            </div>
+            <button class="btn" id="analyzeBtn" onclick="analyzeMessages()">🔍 נתח הודעות</button>
+            <button class="btn" id="fetchBtn" onclick="fetchRecentMessages()">📥 משוך הודעות אחרונות</button>
             <button class="btn" onclick="refreshStatus()">🔄 רענן סטטוס</button>
-            <button class="btn" onclick="showSendMessageModal()">📤 שלח הודעה</button>
+            <button class="btn" id="sendBtn" onclick="showSendMessageModal()">📤 שלח הודעה</button>
             <button class="btn" onclick="showDatabaseStats()">📊 סטטיסטיקות מסד נתונים</button>
             <button class="btn" onclick="showConfigModal()">⚙️ הגדרות</button>
         </div>
-        
+
         <!-- Configuration Modal -->
         <div id="configModal" class="modal">
             <div class="modal-content">
                 <h2>⚙️ הגדרות מערכת</h2>
-                
+
                 <div class="warning-box">
                     <strong>⚠️ חשוב:</strong> כל ההגדרות נשמרות רק בדפדפן שלך (localStorage) ולא בשרת.
                     אם תנקה את ה-cache או תשתמש בדפדפן אחר, תצטרך להזין אותן מחדש.
                 </div>
-                
+
                 <div class="tab-container">
                     <button class="tab active" onclick="switchTab('api')">🔑 API Keys</button>
                     <button class="tab" onclick="switchTab('model')">🤖 AI Model</button>
                     <button class="tab" onclick="switchTab('cron')">⏰ Cron Schedule</button>
                 </div>
-                
+
                 <!-- API Keys Tab -->
                 <div id="api-tab" class="tab-content active">
                     <div class="form-group">
                         <label for="greenApiUrl">Green API URL:</label>
                         <input type="text" id="greenApiUrl" placeholder="https://api.green-api.com">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="greenApiId">ID Instance:</label>
-                        <input type="text" id="greenApiId" placeholder="7103160388">
+                        <input type="text" id="greenApiId" placeholder="1101000001">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="greenApiToken">API Token Instance:</label>
                         <input type="password" id="greenApiToken" placeholder="Your Green API token">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="userPhoneNumber">מספר טלפון לדוחות (מלא עם קידומת):</label>
-                        <input type="tel" id="userPhoneNumber" placeholder="972503973736">
+                        <input type="tel" id="userPhoneNumber" placeholder="972500000000">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="openrouterKey">OpenRouter API Key:</label>
-                        <input type="password" id="openrouterKey" placeholder="sk-or-v1-...">
+                        <div style="display: flex; gap: 10px;">
+                            <input type="password" id="openrouterKey" placeholder="sk-or-v1-..." style="flex: 1;">
+                            <button type="button" onclick="testOpenRouterKey()"
+                                style="padding: 10px 20px; background: #17a2b8; color: white; border: none; border-radius: 5px; cursor: pointer;">🧪
+                                בדוק</button>
+                        </div>
+                        <div id="openrouterTestResult"
+                            style="margin-top: 5px; padding: 8px; border-radius: 5px; display: none;"></div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+                        <label style="display: flex; align-items: center; cursor: pointer; margin-bottom: 10px;">
+                            <input type="checkbox" id="analyzeGroupChats" style="width: auto; margin-left: 10px;">
+                            <span>נתח גם קבוצות (Group Chats)</span>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" id="analyzeAllConversations" style="width: auto; margin-left: 10px;">
+                            <span>נתח את כל השיחות (כולל אלו שנענו)</span>
+                        </label>
+                        <small style="color: #666; display: block; margin-top: 5px;">ברירת מחדל: המערכת מנתחת רק שיחות
+                            שממתינות למענה.</small>
                     </div>
                 </div>
-                
+
                 <!-- AI Model Tab -->
                 <div id="model-tab" class="tab-content">
                     <div class="info-box">
                         <strong>ℹ️ בחר מודל AI:</strong> מודלים שונים מציעים איזון שונה בין מהירות, עלות ואיכות.
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="modelProvider">ספק AI:</label>
                         <select id="modelProvider" onchange="filterModelsByProvider()">
                             <option value="">כל הספקים</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="aiModel">מודל AI:</label>
                         <select id="aiModel">
                             <option value="">טוען מודלים...</option>
                         </select>
                     </div>
-                    
-                    <div id="modelInfo" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px; display: none;">
+
+                    <div id="modelInfo"
+                        style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px; display: none;">
                         <strong id="modelName"></strong>
                         <p id="modelDescription" style="margin: 5px 0; color: #666;"></p>
                         <small id="modelContext" style="color: #999;"></small>
                     </div>
                 </div>
-                
+
                 <!-- Cron Schedule Tab -->
                 <div id="cron-tab" class="tab-content">
                     <div class="info-box">
                         <strong>ℹ️ תזמון אוטומטי:</strong> הגדר מתי הבוט יריץ ניתוח אוטומטי.
                         <br>פורמט Cron: דקה שעה יום חודש יום-בשבוע
                     </div>
-                    
+
                     <div class="form-group">
                         <label>
                             <input type="checkbox" id="cronEnabled" onchange="toggleCronInputs()">
                             אפשר תזמון אוטומטי
                         </label>
                     </div>
-                    
+
                     <div id="cronInputs" style="display: none;">
                         <div class="form-group">
                             <label for="cronPreset">תבניות מוכנות:</label>
@@ -388,7 +417,7 @@
                                 <option value="custom">מותאם אישית...</option>
                             </select>
                         </div>
-                        
+
                         <div class="form-group" id="customCronGroup" style="display: none;">
                             <label for="cronSchedule">ביטוי Cron מותאם:</label>
                             <input type="text" id="cronSchedule" placeholder="0 9 * * *">
@@ -396,21 +425,22 @@
                                 דוגמאות: "0 9 * * *" = 9 בבוקר, "*/30 * * * *" = כל 30 דקות
                             </small>
                         </div>
-                        
-                        <div id="cronStatus" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+
+                        <div id="cronStatus"
+                            style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
                             <strong>סטטוס:</strong> <span id="cronStatusText">לא פעיל</span><br>
                             <strong>הרצה הבאה:</strong> <span id="cronNextRun">-</span>
                         </div>
                     </div>
                 </div>
-                
+
                 <div style="margin-top: 20px; text-align: left;">
                     <button class="btn" onclick="saveConfig()">💾 שמור הגדרות</button>
                     <button class="btn" style="background: #6c757d;" onclick="closeConfigModal()">❌ ביטול</button>
                 </div>
             </div>
         </div>
-        
+
         <!-- Messages Section -->
         <div class="messages">
             <h2>הודעות אחרונות</h2>
@@ -420,10 +450,11 @@
                     <div class="message-content">
                         {% set is_group = message.chat_id and message.chat_id.endswith('@g.us') %}
                         {% set group_indicator = ' 🏛️ (קבוצה)' if is_group else ' 👤 (פרטית)' %}
-                        <strong>{{ message.sender_name or message.sender_contact_name or 'לא ידוע' }}{{ group_indicator }}</strong>
+                        <strong>{{ message.sender_name or message.sender_contact_name or 'לא ידוע' }}{{ group_indicator
+                            }}</strong>
                         <p>{{ message.text_message or '(הודעת מדיה)' }}</p>
                         <div class="message-meta">
-                            {{ message.chat_id }} • 
+                            {{ message.chat_id }} •
                             {% set timestamp = message.timestamp %}
                             {{ (timestamp | int) | timestamp_to_datetime }}
                         </div>
@@ -433,13 +464,13 @@
             </div>
         </div>
     </div>
-    
+
     <div id="notification" style="display: none;"></div>
-    
+
     <script>
         // LocalStorage management
         const CONFIG_KEY = 'whatsapp_bot_config';
-        
+
         function loadConfigFromLocalStorage() {
             const config = localStorage.getItem(CONFIG_KEY);
             if (config) {
@@ -447,43 +478,94 @@
             }
             return {};
         }
-        
+
         function saveConfigToLocalStorage(config) {
             localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
         }
-        
+
         function getConfig(key) {
             const config = loadConfigFromLocalStorage();
             return config[key] || '';
         }
-        
+
         function setConfig(key, value) {
             const config = loadConfigFromLocalStorage();
             config[key] = value;
             saveConfigToLocalStorage(config);
         }
-        
+
+        // Verify Green API connection
+        async function verifyConnection(force = false) {
+            const statusDiv = document.getElementById('connectionStatus');
+            const statusText = document.getElementById('connectionStatusText');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const fetchBtn = document.getElementById('fetchBtn');
+            const sendBtn = document.getElementById('sendBtn');
+
+            // Show loading state
+            statusDiv.style.display = 'block';
+            statusDiv.style.background = '#e7f3ff';
+            statusDiv.style.color = '#004085';
+            statusText.innerHTML = '🔄 בודק חיבור...';
+
+            try {
+                const response = await fetch(`/api/verify-connection?force=${force}`);
+                const result = await response.json();
+
+                if (result.connected) {
+                    statusDiv.style.background = '#d4edda';
+                    statusDiv.style.color = '#155724';
+                    statusText.innerHTML = `✅ ${result.message}`;
+
+                    // Enable buttons
+                    analyzeBtn.disabled = false;
+                    fetchBtn.disabled = false;
+                    sendBtn.disabled = false;
+                } else {
+                    statusDiv.style.background = '#f8d7da';
+                    statusDiv.style.color = '#721c24';
+                    statusText.innerHTML = `❌ ${result.message}`;
+
+                    // Disable buttons
+                    analyzeBtn.disabled = true;
+                    fetchBtn.disabled = true;
+                    sendBtn.disabled = true;
+                }
+
+                return result.connected;
+            } catch (error) {
+                console.error('Error verifying connection:', error);
+                statusDiv.style.background = '#fff3cd';
+                statusDiv.style.color = '#856404';
+                statusText.innerHTML = '⚠️ לא ניתן לבדוק חיבור';
+                return false;
+            }
+        }
+
         // Initialize config on page load
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             loadConfigUI();
             loadAvailableModels();
             loadCronStatus();
             updateConfigStatus();
+            verifyConnection();  // Check connection on load
         });
-        
+
         function loadConfigUI() {
             document.getElementById('greenApiUrl').value = getConfig('green_api_url') || 'https://api.green-api.com';
             document.getElementById('greenApiId').value = getConfig('green_api_id');
             document.getElementById('greenApiToken').value = getConfig('green_api_token');
             document.getElementById('userPhoneNumber').value = getConfig('user_phone_number');
             document.getElementById('openrouterKey').value = getConfig('openrouter_key');
+            document.getElementById('analyzeGroupChats').checked = getConfig('analyze_group_chats') === true;
+            document.getElementById('analyzeAllConversations').checked = getConfig('analyze_all_conversations') === true;
         }
-        
+
         async function loadAvailableModels() {
             try {
                 const response = await fetch('/api/models');
                 const result = await response.json();
-                
+
                 if (result.success) {
                     // Populate providers
                     const providerSelect = document.getElementById('modelProvider');
@@ -493,13 +575,13 @@
                         option.textContent = provider;
                         providerSelect.appendChild(option);
                     });
-                    
+
                     // Store models globally
                     window.availableModels = result.models;
-                    
+
                     // Populate models
                     populateModels(result.models);
-                    
+
                     // Load saved model
                     const savedModel = getConfig('ai_model');
                     if (savedModel) {
@@ -511,31 +593,31 @@
                 console.error('Error loading models:', error);
             }
         }
-        
+
         function populateModels(models) {
             const modelSelect = document.getElementById('aiModel');
             modelSelect.innerHTML = '<option value="">בחר מודל...</option>';
-            
+
             models.forEach(model => {
                 const option = document.createElement('option');
                 option.value = model.id;
                 option.textContent = `${model.name} (${model.provider})`;
                 modelSelect.appendChild(option);
             });
-            
-            modelSelect.onchange = function() {
+
+            modelSelect.onchange = function () {
                 showModelInfo(this.value);
             };
         }
-        
+
         function filterModelsByProvider() {
             const provider = document.getElementById('modelProvider').value;
-            const models = provider 
+            const models = provider
                 ? window.availableModels.filter(m => m.provider === provider)
                 : window.availableModels;
             populateModels(models);
         }
-        
+
         function showModelInfo(modelId) {
             const model = window.availableModels.find(m => m.id === modelId);
             if (model) {
@@ -547,16 +629,16 @@
                 document.getElementById('modelInfo').style.display = 'none';
             }
         }
-        
+
         async function loadCronStatus() {
             try {
                 const response = await fetch('/api/cron/status');
                 const result = await response.json();
-                
+
                 if (result.success) {
                     document.getElementById('cronEnabled').checked = result.enabled;
                     document.getElementById('cronSchedule').value = result.schedule || '0 9 * * *';
-                    
+
                     if (result.enabled) {
                         document.getElementById('cronInputs').style.display = 'block';
                         document.getElementById('cronStatusText').textContent = 'פעיל ✅';
@@ -570,12 +652,12 @@
                 console.error('Error loading cron status:', error);
             }
         }
-        
+
         function toggleCronInputs() {
             const enabled = document.getElementById('cronEnabled').checked;
             document.getElementById('cronInputs').style.display = enabled ? 'block' : 'none';
         }
-        
+
         function applyCronPreset() {
             const preset = document.getElementById('cronPreset').value;
             if (preset === 'custom') {
@@ -585,11 +667,11 @@
                 document.getElementById('cronSchedule').value = preset;
             }
         }
-        
+
         function updateConfigStatus() {
             const hasGreenApi = getConfig('green_api_id') && getConfig('green_api_token');
             const hasOpenRouter = getConfig('openrouter_key');
-            
+
             let status = '';
             if (hasGreenApi && hasOpenRouter) {
                 status = '✅ הגדרות API מוגדרות';
@@ -600,10 +682,10 @@
             } else {
                 status = '❌ נא להגדיר API Keys בהגדרות';
             }
-            
+
             document.getElementById('configStatus').innerHTML = status;
         }
-        
+
         function switchTab(tabName) {
             // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
@@ -612,12 +694,12 @@
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
-            
+
             // Show selected tab
             document.getElementById(tabName + '-tab').classList.add('active');
             event.target.classList.add('active');
         }
-        
+
         async function saveConfig() {
             // Save to localStorage
             setConfig('green_api_url', document.getElementById('greenApiUrl').value);
@@ -626,23 +708,25 @@
             setConfig('user_phone_number', document.getElementById('userPhoneNumber').value);
             setConfig('openrouter_key', document.getElementById('openrouterKey').value);
             setConfig('ai_model', document.getElementById('aiModel').value);
-            
+            setConfig('analyze_group_chats', document.getElementById('analyzeGroupChats').checked);
+            setConfig('analyze_all_conversations', document.getElementById('analyzeAllConversations').checked);
+
             // Update cron schedule
             const cronEnabled = document.getElementById('cronEnabled').checked;
             const cronSchedule = document.getElementById('cronSchedule').value;
-            
+
             try {
                 const response = await fetch('/api/cron/update', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         enabled: cronEnabled,
                         schedule: cronSchedule
                     })
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (result.success) {
                     showNotification('הגדרות נשמרו בהצלחה! 💾', 'success');
                     updateConfigStatus();
@@ -655,19 +739,91 @@
                 showNotification('שגיאה בשמירת הגדרות: ' + error.message, 'error');
             }
         }
-        
+
         function showConfigModal() {
             loadConfigUI();
-            document.getElementById('configModal').style.display = 'block';
+            const modal = document.getElementById('configModal');
+            modal.style.display = 'block';
+
+            // Close modal when clicking outside
+            modal.onclick = function (event) {
+                if (event.target === modal) {
+                    closeConfigModal();
+                }
+            };
         }
-        
+
         function closeConfigModal() {
             document.getElementById('configModal').style.display = 'none';
         }
-        
+
+        async function testOpenRouterKey() {
+            console.log('Testing OpenRouter key...');
+            const keyInput = document.getElementById('openrouterKey');
+            const resultDiv = document.getElementById('openrouterTestResult');
+            const apiKey = keyInput.value.trim();
+
+            if (!apiKey) {
+                console.log('No API key provided');
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = '#f8d7da';
+                resultDiv.style.color = '#721c24';
+                resultDiv.textContent = '❌ נא להזין API Key';
+                return;
+            }
+
+            resultDiv.style.display = 'block';
+            resultDiv.style.background = '#e2e3e5';
+            resultDiv.style.color = '#383d41';
+            resultDiv.textContent = '🔄 בודק מפתח...';
+
+            try {
+                console.log('Sending request to /api/test-openrouter...');
+                const response = await fetch(`/api/test-openrouter?api_key=${encodeURIComponent(apiKey)}`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                console.log('Test result:', result);
+
+                if (result.valid) {
+                    resultDiv.style.background = '#d4edda';
+                    resultDiv.style.color = '#155724';
+                    resultDiv.textContent = '✅ המפתח תקין!';
+                } else {
+                    resultDiv.style.background = '#f8d7da';
+                    resultDiv.style.color = '#721c24';
+                    resultDiv.textContent = `❌ ${result.message}`;
+                }
+            } catch (error) {
+                console.error('Test error:', error);
+                resultDiv.style.background = '#f8d7da';
+                resultDiv.style.color = '#721c24';
+                resultDiv.textContent = `❌ שגיאה בבדיקה: ${error.message}`;
+            }
+        }
+
+        function getHebrewErrorMessage(errorMsg) {
+            if (!errorMsg) return 'שגיאה לא ידועה';
+
+            const msg = errorMsg.toLowerCase();
+
+            if (msg.includes('rate limit')) return 'נא להמתין, הגעת למגבלת הבקשות (Rate Limit). נסה שוב בעוד דקה.';
+            if (msg.includes('not connected')) return 'Green API אינו מחובר. נא לבדוק את החיבור.';
+            if (msg.includes('credentials')) return 'פרטי התחברות שגויים (API Key/Token).';
+            if (msg.includes('instance not found')) return 'מספר המופע (Instance ID) שגוי או לא קיים.';
+            if (msg.includes('timeout')) return 'זמן החיבור עבר (Timeout). האינטרנט איטי או שהשרת עמוס.';
+            if (msg.includes('unauthorized')) return 'אין הרשאה (Unauthorized). בדוק את ה-API Key.';
+            if (msg.includes('json')) return 'שגיאה בפענוח הנתונים (JSON Error).';
+            if (msg.includes('network')) return 'שגיאת רשת. בדוק את החיבור לאינטרנט.';
+            if (msg.includes('503')) return 'השירות אינו זמין כרגע (503).';
+            if (msg.includes('429')) return 'יותר מדי בקשות (429). נא להמתין.';
+
+            return errorMsg; // Return original if no translation found
+        }
+
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
-            notification.className = type;
+            notification.className = `notification ${type}`; // Modified line
             notification.textContent = message;
             notification.style.display = 'block';
             notification.style.position = 'fixed';
@@ -676,16 +832,16 @@
             notification.style.padding = '15px';
             notification.style.borderRadius = '5px';
             notification.style.zIndex = '10000';
-            
+
             setTimeout(() => {
                 notification.style.display = 'none';
             }, 5000);
         }
-        
+
         // Inject config into API calls
         async function makeAuthenticatedRequest(url, options = {}) {
             const config = loadConfigFromLocalStorage();
-            
+
             // Add config to request body if it's a POST
             if (options.method === 'POST' && options.body) {
                 const body = JSON.parse(options.body);
@@ -695,14 +851,16 @@
                     green_api_token: config.green_api_token,
                     user_phone_number: config.user_phone_number,
                     openrouter_key: config.openrouter_key,
-                    ai_model: config.ai_model
+                    ai_model: config.ai_model,
+                    analyze_group_chats: config.analyze_group_chats,
+                    analyze_all_conversations: config.analyze_all_conversations
                 };
                 options.body = JSON.stringify(body);
             }
-            
+
             return fetch(url, options);
         }
-        
+
         async function analyzeMessages() {
             const config = loadConfigFromLocalStorage();
             if (!config.green_api_id || !config.openrouter_key) {
@@ -710,34 +868,41 @@
                 showConfigModal();
                 return;
             }
-            
+
+            // Verify connection first
+            const isConnected = await verifyConnection();
+            if (!isConnected) {
+                showNotification('Green API לא מחובר. נא לבדוק הגדרות', 'error');
+                return;
+            }
+
             showNotification('מתחיל ניתוח...', 'info');
-            
+
             try {
                 const response = await makeAuthenticatedRequest('/api/analyze', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({minutes: 1440})
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ minutes: 1440 })
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (result.success) {
                     showNotification('ניתוח הושלם בהצלחה! ✅', 'success');
                     refreshStatus();
                 } else {
-                    showNotification('שגיאה בניתוח: ' + result.message, 'error');
+                    showNotification('שגיאה בניתוח: ' + getHebrewErrorMessage(result.message), 'error');
                 }
             } catch (error) {
-                showNotification('שגיאה: ' + error.message, 'error');
+                showNotification('שגיאה: ' + getHebrewErrorMessage(error.message), 'error');
             }
         }
-        
+
         async function refreshStatus() {
             try {
                 const response = await fetch('/api/status');
                 const result = await response.json();
-                
+
                 if (result.bot_stats) {
                     document.getElementById('totalMessages').textContent = result.bot_stats.total_messages || 0;
                     document.getElementById('unansweredConversations').textContent = result.bot_stats.unanswered_conversations || 0;
@@ -748,12 +913,104 @@
                 console.error('Error refreshing status:', error);
             }
         }
-        
-        function fetchRecentMessages() {
-            showNotification('משיכת הודעות...', 'info');
-            // Implement fetch messages logic
+
+
+        async function fetchRecentMessages() {
+            // Verify connection first
+            const isConnected = await verifyConnection();
+            if (!isConnected) {
+                showNotification('Green API לא מחובר. נא לבדוק הגדרות', 'error');
+                return;
+            }
+
+            showNotification('משיכת הודעות מ-Green API...', 'info');
+
+            try {
+                console.log('Fetching messages from Green API...');
+                const response = await fetch('/api/refresh-from-green?minutes=60', {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+                console.log('Fetch result:', result);
+
+                if (result.success) {
+                    showNotification(`✅ נמשכו ${result.messages_count} הודעות חדשות!`, 'success');
+
+                    // Load and display messages
+                    console.log('Calling loadMessages()...');
+                    await loadMessages();
+                    console.log('loadMessages() completed');
+
+                    // Refresh stats
+                    console.log('Refreshing stats...');
+                    await refreshStatus();
+                    console.log('Stats refreshed');
+                } else {
+                    showNotification('שגיאה במשיכת הודעות: ' + getHebrewErrorMessage(result.message), 'error');
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                showNotification('שגיאה: ' + getHebrewErrorMessage(error.message), 'error');
+            }
         }
-        
+
+        async function loadMessages() {
+            try {
+                console.log('Loading messages...');
+                const response = await fetch('/api/messages?minutes=60&use_database=true');
+                const result = await response.json();
+                console.log('Messages API response:', result);
+
+                if (result.success && result.messages) {
+                    const messagesList = document.getElementById('messagesList');
+                    console.log('Messages count:', result.messages.length);
+
+                    if (result.messages.length === 0) {
+                        messagesList.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;">אין הודעות להצגה</div>';
+                        return;
+                    }
+
+                    // Filter messages based on settings
+                    const analyzeGroupChats = getConfig('analyze_group_chats') === true;
+                    let messages = result.messages;
+
+                    if (!analyzeGroupChats) {
+                        messages = messages.filter(m => !m.chat_id.endsWith('@g.us'));
+                    }
+
+                    // Limit to 50 messages
+                    messages = messages.slice(0, 50);
+
+                    messagesList.innerHTML = messages.map(message => {
+                        const isGroup = message.chat_id && message.chat_id.endsWith('@g.us');
+                        const groupIndicator = isGroup ? ' 🏛️ (קבוצה)' : ' 👤 (פרטית)';
+                        const senderName = message.sender_name || message.sender_contact_name || 'לא ידוע';
+                        const textMessage = message.text_message || '(הודעת מדיה)';
+                        const timestamp = new Date(message.timestamp * 1000).toLocaleString('he-IL');
+
+                        return `
+                            <div class="message-item">
+                                <div class="message-content">
+                                    <strong>${senderName}${groupIndicator}</strong>
+                                    <p>${textMessage}</p>
+                                    <div class="message-meta">
+                                        ${message.chat_id} • ${timestamp}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    console.log('Messages rendered successfully');
+                } else {
+                    console.error('Invalid response format:', result);
+                }
+            } catch (error) {
+                console.error('Error loading messages:', error);
+            }
+        }
+
         function showSendMessageModal() {
             const chatId = prompt('מזהה צ\'אט:');
             if (!chatId) return;
@@ -761,19 +1018,20 @@
             if (!message) return;
             // Implement send message logic
         }
-        
+
         function showDatabaseStats() {
             showNotification('טוען סטטיסטיקות...', 'info');
             // Implement database stats logic
         }
-        
+
         function showUrgentConversations() {
             showNotification('טוען שיחות דחופות...', 'info');
             // Implement urgent conversations logic
         }
-        
+
         // Auto-refresh every 5 minutes
         setInterval(refreshStatus, 300000);
     </script>
 </body>
+
 </html>

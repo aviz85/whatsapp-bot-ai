@@ -61,14 +61,14 @@ class OpenRouterClient:
         {{
             "chat_id": "מזהה צ'אט",
             "chat_name": "שם הצ'אט",
-            "reason": "סיבה לסיווג",
-            "suggested_response": "הצעה לתגובה מתאימה"
+            "reason": "סיבה לסיווג"
         }}
     ],
     "summary": "סיכום כללי של המצב והמלצות לפעולה",
     "total_conversations": מספר כולל של שיחות
 }}
 
+הערה: עבור "normal_conversations", אל תחזיר "suggested_response". תחזיר רק עבור שיחות דחופות וחשובות.
 חשוב: החזר רק JSON תקין, בלי טקסט נוסף.
 """
         return prompt
@@ -98,19 +98,19 @@ class OpenRouterClient:
             
             # Prepare the request
             request_data = {
-                "model": self.model,
+                "model": settings.openrouter_model,
                 "messages": [
                     {
                         "role": "user",
                         "content": prompt
                     }
                 ],
-                "max_tokens": 2000,
-                "temperature": 0.3
+                "max_tokens": 4000,
+                "temperature": 0.1
             }
             
             headers = {
-                "Authorization": f"Bearer {self.api_key}",
+                "Authorization": f"Bearer {settings.openrouter_api_key}",
                 "Content-Type": "application/json",
                 "HTTP-Referer": "https://whatsapp-bot.local",
                 "X-Title": "WhatsApp Bot Assistant"
@@ -130,15 +130,68 @@ class OpenRouterClient:
                 
                 # Parse the JSON response
                 try:
-                    # Clean the response to ensure it's valid JSON
-                    ai_response = ai_response.strip()
-                    if ai_response.startswith("```json"):
-                        ai_response = ai_response[7:]
-                    if ai_response.endswith("```"):
-                        ai_response = ai_response[:-3]
-                    ai_response = ai_response.strip()
+                    import re
                     
-                    analysis_result = json.loads(ai_response)
+                    # Technique 1: Clean markdown code blocks
+                    clean_response = ai_response.strip()
+                    if "```json" in clean_response:
+                        # Extract content between ```json and ```
+                        match = re.search(r'```json\s*(.*?)\s*```', clean_response, re.DOTALL)
+                        if match:
+                            clean_response = match.group(1)
+                    elif "```" in clean_response:
+                        # Extract content between ``` and ```
+                        match = re.search(r'```\s*(.*?)\s*```', clean_response, re.DOTALL)
+                        if match:
+                            clean_response = match.group(1)
+                    
+                    # Technique 2: Find the first { and last }
+                    json_start = clean_response.find('{')
+                    json_end = clean_response.rfind('}')
+                    
+                    if json_start != -1:
+                        # If we found a start but the end is missing or before the start
+                        if json_end == -1 or json_end < json_start:
+                            self.logger.warning("JSON seems truncated, attempting smart repair...")
+                            clean_response = self._repair_json(clean_response[json_start:])
+                        else:
+                            clean_response = clean_response[json_start:json_end+1]
+                    
+                    # Try to parse
+                    try:
+                        analysis_result = json.loads(clean_response)
+                    except json.JSONDecodeError as e1:
+                        self.logger.warning(f"Standard JSON parse failed: {e1}")
+                        
+                        # Technique 3: Try to fix common JSON errors
+                        try:
+                            # Remove trailing commas
+                            clean_response_fixed = re.sub(r',\s*([}\]])', r'\1', clean_response)
+                            # Fix unescaped quotes
+                            clean_response_fixed = re.sub(r'(?<=\w)"(?=\w)', '\\"', clean_response_fixed)
+                            # Try smart repair again on the fixed version if it looks truncated
+                            if not clean_response_fixed.endswith(('}', ']')):
+                                clean_response_fixed = self._repair_json(clean_response_fixed)
+                                
+                            analysis_result = json.loads(clean_response_fixed)
+                        except json.JSONDecodeError as e2:
+                            self.logger.warning(f"Fix attempt failed: {e2}")
+                            
+                            # Technique 4: Try ast.literal_eval (handles Python dict syntax which is common from AI)
+                            import ast
+                            try:
+                                self.logger.warning("Trying ast.literal_eval...")
+                                # Replace JSON null/true/false with Python None/True/False
+                                python_syntax = clean_response.replace('null', 'None').replace('true', 'True').replace('false', 'False')
+                                analysis_result = ast.literal_eval(python_syntax)
+                            except Exception as e3:
+                                self.logger.error(f"All parsing attempts failed.")
+                                self.logger.error(f"Original JSON error: {e1}")
+                                self.logger.error(f"Fix attempt error: {e2}")
+                                self.logger.error(f"AST error: {e3}")
+                                
+                                # Raise the original error as it's usually the most descriptive
+                                raise ValueError(f"JSON Parse Error: {e1}")
                     
                     # Create PriorityReport object
                     report = PriorityReport(
@@ -153,10 +206,18 @@ class OpenRouterClient:
                     
                     return report
                 
-                except json.JSONDecodeError as e:
+                except Exception as e:
                     self.logger.error(f"Failed to parse AI response as JSON: {e}")
                     self.logger.error(f"Raw response: {ai_response}")
-                    raise ValueError("Invalid JSON response from AI")
+                    
+                    # Fallback: Return empty report with error summary
+                    return PriorityReport(
+                        urgent_conversations=[],
+                        important_conversations=[],
+                        normal_conversations=[],
+                        summary=f"שגיאה בפענוח תשובת ה-AI. התקבל תוכן לא תקין. (שגיאה: {str(e)})",
+                        total_conversations=0
+                    )
             
             else:
                 raise ValueError("No valid response from OpenRouter")
@@ -227,3 +288,40 @@ class OpenRouterClient:
         summary_lines.append(report.summary)
         
         return "\n".join(summary_lines)
+
+    def _repair_json(self, json_str: str) -> str:
+        """Attempt to repair truncated JSON by closing open brackets/braces"""
+        stack = []
+        in_string = False
+        escape = False
+        
+        for char in json_str:
+            if escape:
+                escape = False
+                continue
+            if char == '\\':
+                escape = True
+                continue
+            if char == '"':
+                in_string = not in_string
+                continue
+            
+            if not in_string:
+                if char == '{':
+                    stack.append('}')
+                elif char == '[':
+                    stack.append(']')
+                elif char == '}' or char == ']':
+                    if stack and stack[-1] == char:
+                        stack.pop()
+        
+        # Close string if open
+        if in_string:
+            json_str += '"'
+            
+        # Close all open structures
+        while stack:
+            closer = stack.pop()
+            json_str += closer
+            
+        return json_str
